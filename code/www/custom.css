@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+  background-color: #2daed8;
+  color: white;
+}
+
+.nav-tabs>li>a:hover {
+  color: #211e6b;
+   background-color: rgba(45, 174, 216, 0.25); 
+}
+
+.nav-tabs>li>a {
+  background-color: rgba(242, 242, 242);
+  color: black;
+  outline-color: #2daed8;
+  border-bottom-color: #2daed8;
+  border-bottom-width: 1px;
+}
+
+.nav-tabs {
+ border-bottom: 3px solid #2daed8;
+ font-size: 14px;
+}
+
+* {
+  font-family: 'Montserrat';
+}
+
+.navbar {
+    background-color: white;
+    color: #2d5973;
+    border: none;
+    font-size: 14px;
+    padding-left: 10px;
+    padding-right: 30px;
+}
+
+.navbar .navbar-nav {
+    float: right;
+}
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    color:  #2d5973;
+    background-color: white;
+}
+
+.navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover {
+   color:  #2d5973;
+   background-color: white;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: #2d5973;
+    background: white;
+    border: 1.5px solid #2d5973;
+    display: block;
+    padding: 5px 15px 5px;
+    border-radius: 30px;
+    margin: 5px;
+}
+
+table, th, td {
+  border-collapse:collapse;
+  padding: 15px;
+}
+
+.right{
+    float:right;
+}
+
+.left{
+    float:left;
+}
+
+table thead th { 
+  border-bottom: 1px solid #ddd; 
+}
+
+th, td { 
+  padding: 5px; 
+}
+
+thead, tfoot, tr:nth-child(even) { 
+  background: #f2f2f2; 
+}
+
+img {
+  width: 50%;
+  height: 50%;
+}

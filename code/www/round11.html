@@ -1,0 +1,135 @@
+<html>
+<head>
+<style type="text/css">
+.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+}
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+  <link rel="stylesheet" href="code/www/custom.css">
+</head>
+ <table style="width:70%; color: #2d5973;" align = "center">
+  <tr style="border-bottom:3px solid #2daed8;background-color: #f7f7f7;">
+    <td style="width:10%"></td>
+    <td style="border-left:3px solid #2daed8;width:25%"><spam style="font-size:22px;"><b>High Immune Escape / Low Transmissibility Increase</b></spam></td>
+    <td style="border-left:3px solid #bfbfbf;width:25%;vertical-align:top"><spam style="font-size:22px;"><b>Low Immune Escape / High Transmissibility Increase</b></spam></td>
+  </tr>
+  <tr>
+    <td valign="top" style="border-right:3px solid #2daed8;background-color: #f7f7f7;border-bottom:3px solid #bfbfbf">
+      <spam style="font-size:22px;"><b>Optimistic severity</b></spam></br></td>
+    <td style="background-color: #fdfdfd;width:300px;border-bottom:3px solid #bfbfbf;vertical-align:top">
+      <spam style="font-size:22px;color:#2daed8;" class="right"><b>Scenario A</b></br></spam></br>
+      <spam class="left" style="font-size:20px;"><b>Immune Escape / Transmissibility</b></spam></br></br>
+      <div style="font-size:18px;">- Advantage Omicron over Delta in South Africa, Rt ratio: 2.8 (Rt = 2.5)</br></div></br>
+      <div style="font-size:18px;">- Intrinsic transmissibility Omicron = 1 x seasonally-adjusted R0 of Delta </br></div></br>
+      <div style="font-size:18px;">- Immune escape = <b>80%</b></div>
+       <hr style="border: 0.5px solid;border-color: #E4E4E4;margin-left:20px;margin-right:20px;margin-top:50px;">
+      <spam style="font-size:20px;"><b>Severity</b></spam></br>
+      <div style="font-size:18px;">- Among naive individuals, <b>50% reduction</b> in severity of omicron infection, relative to Delta (all-age risk of hospitalization and death divided by two; age-specific risks at teams discretion).</br></div></br>
+      <spam class="left" style="font-size:18px;">- Among previously infected or vaccinated, residual protection for Omicron cases: </br>
+       &emsp;- Hospitalization: <b>85%</b> [i.e., Pr(hosp|any immunity) = 0.15 * Pr(hosp|naive)]</br>
+       &emsp;- Death: <b>95%</b> [i.e.. Pr(death|any immunity) = 0.05*Pr(death|naive)]</spam>
+    </td>
+    <td style="border-left:3px solid #bfbfbf;background-color: #fdfdfd;border-bottom:3px solid #bfbfbf;vertical-align:top;">
+      <spam style="font-size:22px;color:#2daed8;" class="right"><b>Scenario B</b></spam></br>
+      <spam class="left" style="font-size:20px;"><b>Immune Escape / Transmissibility</b></spam></br></br>
+      <div style="font-size:18px;">- Advantage Omicron over Delta in South Africa, Rt ratio: 2.8 (Rt = 2.5)</br></div></br>
+      <div style="font-size:18px;">- Intrinsic transmissibility Omicron = 1.66 x seasonally-adjusted R0 of Delta* </br></div></br>
+      <div style="font-size:18px;">- Immune escape = <b>50%</b></div>
+      <hr style="border: 0.5px solid;border-color: #E4E4E4;margin-left:20px;margin-right:20px;margin-top:50px;">
+      <spam style="font-size:20px;"><b>Severity</b></spam></br>
+      <div style="font-size:18px;">- Among naive individuals, <b>50% reduction</b> in severity of omicron infection, relative to Delta (all-age risk of hospitalization and death divided by two; age-specific risks at teams discretion).</br></div></br>
+      <spam class="left" style="font-size:18px;">- Among previously infected or vaccinated, residual protection for Omicron cases: </br>
+       &emsp;- Hospitalization: <b>85%</b> [i.e., Pr(hosp|any immunity) = 0.15 * Pr(hosp|naive)]</br>
+       &emsp;- Death: <b>95%</b> [i.e.. Pr(death|any immunity) = 0.05*Pr(death|naive)]</spam>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" style="border-right:3px solid #2daed8;background-color: #f7f7f7;">
+      <spam style="font-size:22px;"><b>Pessimistic Severity</b></spam></br></td>
+    <td style="background-color: #fdfdfd;">
+     <spam style="font-size:22px;color:#2daed8;" class="right"><b>Scenario C</b></spam></br>
+     <spam class="left" style="font-size:20px;"><b>Immune Escape / Transmissibility</b></spam></br></br>
+      <div style="font-size:18px;">- Advantage Omicron over Delta in South Africa, Rt ratio: 2.8 (Rt = 2.5)</br></div></br>
+      <div style="font-size:18px;">- Intrinsic transmissibility Omicron = 1 x seasonally-adjusted R0 of Delta </br></div></br>
+      <div style="font-size:18px;">- Immune escape = <b>80%</b></div>
+      <hr style="border: 0.5px solid;border-color: #E4E4E4;margin-left:20px;margin-right:20px;margin-top:50px;">
+     <spam style="font-size:20px;"><b>Severity</b></spam></br>
+      <div style="font-size:18px;">- Among naive individuals, <b>no change</b> in severity of omicron infection, relative to Delta.</br></div></br>
+      <spam class="left" style="font-size:18px;">- Among previously infected or vaccinated, residual protection for Omicron cases: </br>
+       &emsp;- Hospitalization: <b>70%</b></br>
+       &emsp;- Death: <b>85%</b></br></spam></br>
+    </td>
+    <td style="border-left:3px solid #bfbfbf;background-color: #fdfdfd;vertical-align:top;">
+     <spam style="font-size:22px;color:#2daed8;" class="right"><b>Scenario D</b></spam></br>
+     <spam class="left" style="font-size:20px;"><b>Immune Escape / Transmissibility</b></spam></br></br>
+      <div style="font-size:18px;">- Advantage Omicron over Delta in South Africa, Rt ratio: 2.8 (Rt = 2.5)</br></div></br>
+      <div style="font-size:18px;">- Intrinsic transmissibility Omicron = 1.66 x seasonally-adjusted R0 of Delta* </br></div></br>
+      <div style="font-size:18px;">- Immune escape = <b>50%</b></div>
+      <hr style="border: 0.5px solid;border-color: #E4E4E4;margin-left:20px;margin-right:20px;margin-top:50px;">
+     <spam style="font-size:20px;"><b>Severity</b></spam></br>
+      <div style="font-size:18px;">- Among naive individuals, <b>no change</b> in severity of omicron infection, relative to Delta.</br></div></br>
+      <spam class="left" style="font-size:18px;">- Among previously infected or vaccinated, residual protection for Omicron cases: </br>
+       &emsp;- Hospitalization: <b>70%</b></br>
+       &emsp;- Death: <b>85%</b></br></spam></br>
+    </td>
+  </tr>
+</table>
+<div style="font-size:18px;margin-left:15%;margin-right:15%;color: #2d5973"> * Assuming Delta R0 = 6, Omicron R0 = 6 or R0 = 10.</div>
+</html>
