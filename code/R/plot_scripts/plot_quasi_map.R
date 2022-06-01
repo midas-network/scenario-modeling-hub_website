@@ -5,10 +5,13 @@ get_quasi_map_data <- function(rnd_num,
                                forward=6
                                ) {
   
+  
   # we need both gold standard data and model _data
   # First model data, only ensemble
   if(is.null(model_to_show)) {
-    model_to_show = fifelse(rnd_num>=5, "Ensemble_LOP", "Ensemble")
+    sel <- grepl(rnd_num, scen_info$rnd_num)
+    model_to_show = unique(scen_info[sel, ens_default])
+     #fifelse(rnd_num>=5, "Ensemble_LOP", "Ensemble")
   }
   
   m_df <- model_data[

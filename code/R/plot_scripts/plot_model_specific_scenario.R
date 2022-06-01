@@ -119,7 +119,7 @@ create_model_specific_plotly <- function(model_data, location, rtab, target_type
   p <- subplot(subplots, shareX = TRUE, shareY=FALSE) %>% 
     layout(
       annotations = outcome_annotations,
-      height=1050, 
+     # height=1050, 
       margin=0.1,
       title = list(
         text = paste0(
@@ -139,7 +139,7 @@ outcome_subplot <- function(m_df, g_df, outcome_name, model_legend=F, trace_name
   
   
   
-  p <- plot_ly() %>%
+  p <- plot_ly(height = 1050) %>%
     # add the model data, using the model_legend to turn legend on or off
     add_trace(data=m_df,
               x=~target_end_date,

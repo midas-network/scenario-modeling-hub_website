@@ -67,13 +67,20 @@ three methods:
 1.  Ensemble_LOP (LOP:Linear Opinion Pool) is calculated by averaging
 cumulative probabilities of a given value across submissions. At each
 value, the highest and lowest probability is removed before
-averaging.
+averaging. Starting round 13, the ensemble is calculated by averaging 
+cumulative probabilities of a given value across weighted submissions.
 
 2. Ensemble_LOP_untrimmed is calculated by averaging cumulative
 probabilities of a given value across submissions. All values are
-included in the average.
+included in the average. Starting round 13, the ensemble is calculated 
+by averaging cumulative probabilities of a given value across weighted 
+submissions.
 
 3. Ensemble is obtained by calculating the median of each submitted quantile. 
+Starting round 13, the weighted median is calculated.
+
+Starting round 13 and by default, a weight of 1 is assigned for each s
+ubmission, 0.5 if a team makes two submissions.
 
 #### - Gold standard data (`visualization/data-goldstandard`)
 

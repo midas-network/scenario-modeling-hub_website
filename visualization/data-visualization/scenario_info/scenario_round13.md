@@ -1,7 +1,7 @@
 <p>&nbsp;</p>
-Round 13 of the COVID-19 Scenario Modeling Hub (SMH) considers the interaction of waning immunity against infection (first dimension) and the emergence of a new variant (2nd dimension) over a 52-week period. We follow the usual 2*2 table structure. 
+Round 13 of the COVID-19 Scenario Modeling Hub (SMH) considers the interaction of waning immunity against infection (first dimension) and the emergence of a new variant (2nd dimension) over a 52-week period. We follow the usual 2x2 table structure. 
 
-<img src= https://raw.githubusercontent.com/midas-network/covid19-scenario-modeling-hub/master/Round13_scenarios_table.PNG>
+<img src= https://raw.githubusercontent.com/midas-network/covid19-scenario-modeling-hub/master/previous-rounds/Round13_scenarios_table.PNG>
 
 **Risk of severe disease, conditional on infection, does not wane with time and does not change with variant X** (see protection against severe disease section below). 
 #### **Waning Immunity**

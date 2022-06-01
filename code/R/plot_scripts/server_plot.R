@@ -1,5 +1,6 @@
-server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
+server_plot <- function(model_data, target, loc, scen_sel, pi, rtab, ens_chk) {
   
+
   # GOLD STANDARD DATA
   gs_target <- getOption("gs_targets")[[target]]
   if (gs_target == "cumulative_hospitalization") {
@@ -10,22 +11,32 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
     gs_visual <- gs_visual[!is.na(value)]
     gs_visual <- gs_visual[ value >= 0]
   }
-  # PROJECTION DATA 
+ 
+  # GLOBAL DATA
   round_number <- as.numeric(gsub("[^[:digit:]]", "", rtab))
+  # Default Ensemble data
+  ens_exc <- unique(scen_info[rnd_num == round_number, ens_excl])
+  ens_def <- unique(scen_info[rnd_num == round_number, ens_default])
+  
+  # PROJECTION DATA 
   model_round <- gsub(" ", "", tolower(rtab))
   if (gs_target == "cumulative_hospitalization" & (length(scen_sel) == 0)) { 
     # Error for cumulative hospitalization
     stop("Please select one or more scenario(s)")
   }
   model_visual <- mutate_if(model_data, is.factor, as.vector)
-  model_visual <- model_visual[scenario_id %in% scen_sel & location_name == loc & 
-                             outcome == target]
+  model_visual <- model_visual[scenario_id %in% scen_sel & 
+                                 location_name == loc & outcome == target]
   model_visual[ , target_end_date := as.Date(target_end_date)]
   if (round_number > 2 & round_number < 7)  {
     model_visual <- model_visual[truncated == 0]
   }
   if ("truncated" %in% colnames(model_visual)) 
     model_visual <- model_visual[, !"truncated"]
+  # remove non default ensemble if checked
+  if (isFALSE(ens_chk)) {
+    model_visual <- model_visual[!grepl(ens_exc, model_name)]  
+  }
   
   # filter to the last 6 months of data
   # Date of prediction use for filtering and for gray vertical line
@@ -125,11 +136,10 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
       model_visual[, model_name := gsub("USC-SIkJalpha", "USC-SIkJalpha*", 
                                         model_name)] 
     }
-    model_visual[, order := ifelse(
-      grepl("Ensemble_LOP_untrimmed$", model_name) & round_number == 13, 1, 
-      ifelse(grepl("Ensemble_LOP$", model_name) & round_number > 4, 1, 
-      ifelse(grepl("Ensemble$", model_name) & round_number < 5, 1, 0)))]
-    model_visual$mod_o <- as.factor(apply(model_visual[,c("order", "model_name")],
+    model_visual[, order := ifelse(grepl(paste0("^", ens_def, "$"), model_name), 
+                                   1, 0)]
+    model_visual$mod_o <- as.factor(apply(model_visual[,c("order", 
+                                                          "model_name")],
                                           1, paste, collapse="-")) 
   }
   ## Restrict visual to 26 or 52 weeks projections
@@ -173,11 +183,13 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
   
   # prior peak line (only for incident outcomes, round 11 and 12)
   
-  if(round_number %in% c(11,12) & grepl("Incident",target)) {
-    prior_peak_value = gs_visual[time_value<"2021-12-01" & !is.na(value)][order(-value)][1]
+  if(round_number %in% c(11, 12) & grepl("Incident", target)) {
+    prior_peak_value <-  
+      gs_visual[time_value<"2021-12-01" & !is.na(value)][order(-value)][1]
     prior_peak_hline <- list(
-      type="line", y0=prior_peak_value[,value], y1=prior_peak_value[,value], 
-      x0=0, x1=1, xref="paper", line=list(color="red", dash="dot"), text="Prior Peak"
+      type ="line", y0 = prior_peak_value[, value], 
+      y1 = prior_peak_value[, value], x0 = 0, x1 = 1, xref = "paper", 
+      line = list(color = "red", dash = "dot"), text = "Prior Peak"
     )
   }
 
@@ -191,8 +203,9 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
       add_trace(data = gs_visual, x = ~time_value, y = ~value, type = "scatter",
                 mode = "lines+markers", line = list(color = "#6e6e6e"),
                 hoverinfo = "text", name = y_name, legendgroup = "group1",
-                hovertext = paste("Date: ", gs_visual$time_value, "<br>", y_name,
-                             ": ", format(gs_visual$value, big.mark = ","), 
+                hovertext = paste("Date: ", gs_visual$time_value, "<br>", 
+                                  y_name, ": ", 
+                                  format(gs_visual$value, big.mark = ","), 
                              sep = ""), 
                 marker = list(color = "#6e6e6e", size = 7))
     
@@ -240,22 +253,26 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
         
         
         plot_model <- plot_model %>% 
-          add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.025`, ymax = ~`0.975`, 
-                      color = ~mod_o, opacity = 0.1, line = list(width = 0),
-                      hoverinfo = "text", hovertext= text_pi)%>%
-          add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.25`, ymax = ~`0.75`, 
-                      color = ~mod_o, opacity = 0.1, line = list(width = 0),
-                      hoverinfo = "text", hovertext= text_pi)
+          add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.025`, 
+                      ymax = ~`0.975`, color = ~mod_o, opacity = 0.1, 
+                      line = list(width = 0), hoverinfo = "text", 
+                      hovertext = text_pi)%>%
+          add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.25`, 
+                      ymax = ~`0.75`, color = ~mod_o, opacity = 0.1, 
+                      line = list(width = 0), hoverinfo = "text", 
+                      hovertext = text_pi)
         
         if (round_number>=11) {
           
           plot_model <- plot_model %>% 
-            add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.05`, ymax = ~`0.95`, 
-                        color = ~mod_o, opacity = 0.1, line = list(width = 0),
-                        hoverinfo = "text", hovertext= text_pi)%>%
-            add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.1`, ymax = ~`0.9`, 
-                        color = ~mod_o, opacity = 0.1, line = list(width = 0),
-                        hoverinfo = "text", hovertext= text_pi)
+            add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.05`, 
+                        ymax = ~`0.95`, color = ~mod_o, opacity = 0.1, 
+                        line = list(width = 0), hoverinfo = "text", 
+                        hovertext = text_pi)%>%
+            add_ribbons(data = df, x = ~target_end_date, ymin = ~`0.1`, 
+                        ymax = ~`0.9`, color = ~mod_o, opacity = 0.1, 
+                        line = list(width = 0), hoverinfo = "text", 
+                        hovertext = text_pi)
         }
         
       }
@@ -287,7 +304,8 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
         layout(xaxis = list(tickvals = as.list(x_vals), tickangle = 45, 
                             ticktext = as.list(x_text), mirror = TRUE, 
                             linecolor = "black", linewidth = 0.5),
-               yaxis = list(mirror = TRUE, linecolor = "black", linewidth = 0.5),
+               yaxis = list(mirror = TRUE, linecolor = "black", 
+                            linewidth = 0.5),
                shapes = shapes, 
                annotations = list(x = 0.5, y = 1.075, xref = "paper",
                                   yref = "paper", xanchor = "center", 
@@ -300,7 +318,8 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
                                                     grep(x, scenario_name, 
                                                          value = TRUE)))))
     })
-   plot_model <- subplot(subplots, nrows = nrow_plot, titleX = FALSE, titleY = FALSE)
+   plot_model <- subplot(subplots, nrows = nrow_plot, titleX = FALSE, 
+                         titleY = FALSE)
 
    # rm object subplots
    rm(subplots)
@@ -354,16 +373,7 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
       }
     }
     # Ensemble Special form
-    if (round_number > 4) {
-      if (round_number == 13) {
-        ens_def <- "^Ensemble_LOP_untrimmed$"
-      } else {
-        ens_def <- "^Ensemble_LOP$"
-      }
-    } else {
-      ens_def <- "^Ensemble$"
-    }
-    sel <- grep(ens_def, map(plot_model$x$data, "name"))
+    sel <- grep(paste0(ens_def, "$"), map(plot_model$x$data, "name"))
     for (j in sel) {
       plot_model$x$data[[j]]$visible <- TRUE
       plot_model$x$data[[j]]$line$color <- "#3a3a3a"
@@ -378,43 +388,37 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
         plot_model$x$data[[j]]$opacity <- 0.15
         }
     } 
-    # Menu Model     
-    if (round_number > 4) {
-      if (round_number == 13) {
-        view_def <- "Ensemble_LOP_untrimmed$|-Ensemble_LOP_untrimmed,|^$|^Observed"
-      } else {
-        view_def <- "Ensemble_LOP$|-Ensemble_LOP,|^$|^Observed"
-      }
-    } else {
-      view_def <- "Ensemble$|-Ensemble,|^$|^Observed"
-    }
     
-    ##Take all away as an option if we are in multi mode.
+    # Menu Model     
+    view_def <- paste0(ens_def, "$|-", ens_def, ",|^$|^Observed")
     if (pi!=-1) {
+      # Data include only Ensemble Default
+      buttons <- list(
+        list(
+          method = "restyle",
+          args = list("visible", ifelse(
+            grepl(view_def, map(plot_model$x$data, "name")), 
+            TRUE, "legendonly")), 
+          label = "Ensemble"),
+        list(method = "restyle",
+             args = list("visible", 
+                         rep(TRUE, length(plot_model$x$data))), 
+             label = "All"))
+      
       updatemenu <- list(
         list(y = 1, x = 1.01, xanchor = "left", type = "buttons", active = 0,
              font = list(size = 16),
-             buttons = 
-               c(list(list(method = "restyle",
-                           args = list("visible", ifelse(
-                             grepl(view_def, map(plot_model$x$data, "name")), 
-                             TRUE, "legendonly")),
-                           label = "Ensemble")),
-                 list(list(method = "restyle",
-                           args = list("visible", 
-                                       rep(TRUE, length(plot_model$x$data))),
-                           label = "All")))))
+             buttons = buttons))
     } else {
       updatemenu <- list(
         list(y = 1, x = 1.01, xanchor = "left", type = "buttons", active = 0,
              font = list(size = 16),
              buttons = 
-               c(list(list(method = "restyle",
-                           args = list("visible", ifelse(
-                             grepl(view_def, map(plot_model$x$data, "name")), 
-                             TRUE, "legendonly")),
-                           label = "Ensemble")))))
-      
+               list(list(method = "restyle",
+                         args = list("visible", ifelse(
+                           grepl(view_def, map(plot_model$x$data, "name")), 
+                           TRUE, "legendonly")),
+                         label = "Ensemble"))))
     }
   } else {
     updatemenu <- NULL
@@ -429,9 +433,9 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
                      xanchor = "center", xref = "paper", yref='paper', 
                      showarrow = FALSE),
                 list(text = y_name_title,
-                     font = list(size = 16), y = 0.5, x = -0.05, textangle = 270,
-                     xanchor = "center",  xref = "paper", yref='paper', 
-                     showarrow = FALSE))
+                     font = list(size = 16), y = 0.5, x = -0.05, 
+                     textangle = 270, xanchor = "center",  xref = "paper", 
+                     yref='paper', showarrow = FALSE))
   if (!is.null(scen_sel)) {
     annot <- c(annot, list(
       list(text = "View:", font = list(size = 16),  y = 1.035, 
@@ -440,38 +444,61 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
     if (round_number %in% c(6, 7)) {
       annot <- c(annot,
                  list(
-                   list(text = paste0("* A correction to the UNCC-Hierbin round ",
-                                      round_number, " projections was made on 2021-07-23"),
-                        font = list(size = 13, color = "grey"), y = -0.4, x = -0.02, xanchor = "left",
+                   list(text = paste0(
+                     "* A correction to the UNCC-Hierbin round ",
+                     round_number, " projections was made on 2021-07-23"),
+                        font = list(size = 13, color = "grey"), y = -0.4, 
+                     x = -0.02, xanchor = "left",
                         xref = "paper", yref='paper', showarrow = FALSE)))
     }
     if (round_number %in% c(9)) {
       annot <- c(annot,
                  list(
-                   list(text = paste0("* A correction to the MOBS_NEU-GLEAM_COVID, UVA-EpiHiper and USC-SIkJalpha round ",
-                                      round_number, " projections was made on 2021-10-31, 2021-10-29 and 2021-11-08, respectively."),
-                        font = list(size = 13, color = "grey"), y = -0.4, x = -0.02, xanchor = "left",
+                   list(text = paste0(
+                     "* A correction to the MOBS_NEU-GLEAM_COVID,",
+                     " UVA-EpiHiper and USC-SIkJalpha round ", round_number, 
+                     " projections was made on 2021-10-31, 2021-10-29 and ",
+                     "2021-11-08, respectively."),
+                        font = list(size = 13, color = "grey"), y = -0.4, 
+                     x = -0.02, xanchor = "left",
                         xref = "paper", yref='paper', showarrow = FALSE)))
     }
     if (round_number %in% c(12)) {
       annot <- c(annot,
                  list(
-                   list(text = paste0("* A correction to the UNCC-Hierbin and UTA-ImmunoSEIRS round ",
-                                      round_number, " projections was made on 2022-01-21 and 2022-01-24, respectively."),
-                        font = list(size = 13, color = "grey"), y = -0.4, x = -0.02, xanchor = "left",
+                   list(text = paste0(
+                     "* A correction to the UNCC-Hierbin and UTA-ImmunoSEIRS",
+                     " round ",  round_number, " projections was made on ",
+                     "2022-01-21 and 2022-01-24, respectively."),
+                        font = list(size = 13, color = "grey"), y = -0.4, 
+                     x = -0.02, xanchor = "left",
                         xref = "paper", yref='paper', showarrow = FALSE)))
     }
+    
+    if (round_number %in% c(13)) {
+      annot <- c(annot,
+                 list(
+                   list(text = paste0(
+                     "The default ensemble has been changed to the ",
+                     "Ensemble_LOP_untrimmed for this round. "),
+                     font = list(size = 13, color = "grey"), y = -0.4, 
+                     x = -0.02, xanchor = "left",
+                     xref = "paper", yref='paper', showarrow = FALSE)))
+    }
+    
+    
     
     # Add annotation for the prior peak line
     if(round_number %in% c(11,12) & grepl("Incident", target)) {
       annot <- c(annot,
                  list(
-                   list(text = paste0("Prior Peak: ",
-                                      format(prior_peak_value[,value], big.mark = ",", scientific = FALSE),
-                                      " (",
-                                      prior_peak_value[,time_value],")"
-                                      ),
-                        font = list(size=8, color="red"), y=prior_peak_value[,value], x=as.Date("2021-10-15"), showarrow=TRUE)
+                   list(text = paste0(
+                     "Prior Peak: ", format(prior_peak_value[,value], 
+                                           big.mark = ",", scientific = FALSE),
+                     " (", prior_peak_value[,time_value],")"),
+                        font = list(size = 8, color = "red"), 
+                     y = prior_peak_value[, value], x = as.Date("2021-10-15"), 
+                     showarrow = TRUE)
                  ))
     }
   }
@@ -514,10 +541,9 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
   plot_title_text=paste0(
     "<b>Projected ",
     y_name_title,
-    " by Epidemiological Week and by Scenario for Round ", round_number, " - ", loc,"</b><br>",
-    "<sup>( - Projection Epiweek; -- Current Week",
-    ")<br><br></sup>"
-    )
+    " by Epidemiological Week and by Scenario for Round ", round_number, " - ", 
+    loc,"</b><br>", "<sup>( - Projection Epiweek; -- Current Week", 
+    ")<br><br></sup>")
 
   
   plot_model <- plot_model %>%
@@ -552,10 +578,12 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab) {
       legend = list(x = 0, xanchor = "left", y = -0.2,  orientation = "h",
                     font = list(size = 14), tracegroupgap = 15,
                     title = list(
-                      text = paste0("<sup>Double-click on a model name to only display it.<br>",
-                                    "Click on a model name to remove it or add it from <br> the plot display.<br>",
-                                    "Zoom in the graph by click and drag (double-click <br> to zoom-out)<br></sup>", 
-                                    "<br><br>"),
+                      text = paste0(
+                        "<sup>Double-click on a model name to only display it.",
+                        "<br>Click on a model name to remove it or add it from",
+                        " <br> the plot display.<br>Zoom in the graph by click",
+                        " and drag (double-click <br> to zoom-out)<br></sup>", 
+                        "<br><br>"),
                       font = list(size = 14))
                    ), 
       showlegend = TRUE

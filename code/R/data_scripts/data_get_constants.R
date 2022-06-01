@@ -25,7 +25,6 @@ scen_info <- data.table(
   rnd_num = as.numeric(gsub("[[:alpha:]]", "", names(scenario_sel))),
   scenario_name = scenario_name, 
   scen_title = str_replace(scenario_name, paste0(" \\(",scenario_sel,"\\)"), "")
-  
 )
 
 
@@ -43,6 +42,18 @@ rnd_desc = list("Scenario defined as of 2020-12-22</br>Model Projecting from Epi
                 "Scenario defined as of 2022-01-09</br>Model Projecting from Epiweek 2 to Epiweek 12",
                 "Scenario defined as of 2022-02-22</br>Model Projecting from Epiweek 7 to Epiweek 7")
 scen_info[, rnd_tab := paste0("Round ",rnd_num)]
+
+scen_info[, ens_default := case_when(
+  rnd_num < 5 ~ "Ensemble",
+  rnd_num > 4 & rnd_num < 13 ~ "Ensemble_LOP",
+  rnd_num >= 13 ~ "Ensemble_LOP_untrimmed"
+)]
+
+scen_info[, ens_excl := case_when(
+  rnd_num < 5 ~ "ZZZZZZZZZZ",
+  rnd_num > 4 & rnd_num < 13 ~ "^Ensemble_LOP_untrimmed$|^Ensemble$",
+  rnd_num >= 13 ~ "^Ensemble_LOP$|^Ensemble$"
+)]
 
 scen_info[, proj_length:=fcase(
   rnd_num%in%c(10,13),52,

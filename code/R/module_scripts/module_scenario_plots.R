@@ -87,36 +87,32 @@ target_checkbox_UI <- function(id) {
 }
 
 
-get_default_ensemble <- function(models, r) {
-  ensembles = models[str_detect(models, regex("ensemble",ignore_case = T))]
-  
-  if(length(ensembles)==1) {
-    # there is only one so that has to be the default
-    default_ensemble = ensembles
-  } else {
-    # We have more than 1 ensemble, so we choose based on round number-
-    if(r>=5) {
-      # default will be the ensemble with "lop" in name
-      default_ensemble = ensembles[str_detect(ensembles, regex("lop",ignore_case = T))]
-    } else {
-      # default will be ensemble NOT with 'lop" in name
-      default_ensemble = ensembles[str_detect(ensembles, regex("lop",ignore_case = T),negate = T)]
-    }
-  }
-  
-  return(default_ensemble)
-  
-}
+#get_default_ensemble <- function(models, r) {
+#  ensembles = models[str_detect(models, regex("ensemble",ignore_case = T))]
+#  
+#  if(length(ensembles)==1) {
+#    # there is only one so that has to be the default
+#    default_ensemble = ensembles
+#  } else {
+#    # We have more than 1 ensemble, so we choose based on round number-
+#    if(r>=5) {
+#      # default will be the ensemble with "lop" in name
+#      default_ensemble = ensembles[str_detect(ensembles, regex("lop",ignore_case = T))]
+#    } else {
+#      # default will be ensemble NOT with 'lop" in name
+#      default_ensemble = ensembles[str_detect(ensembles, regex("lop",ignore_case = T),negate = T)]
+#    }
+#  }
+#  
+#  return(default_ensemble)
+#  
+#}
 
 #This version of the default ensemble function is based on pre-selected
 #List of round numbers and specific default ensembles
 get_default_ensemble_fixed <- function(r) {
   return(
-    if(r<=4) {
-      "Ensemble" 
-      } else {
-        if (r==13) "Ensemble_LOP_untrimmed" else "Ensemble_LOP"
-      }
+    unique(scen_info[rnd_num == r, ens_default])
   )
 }
 
@@ -156,12 +152,7 @@ round_scenario_plots_row_UI <- function(id) {
   #models = unique(model_data$model_name)
   
   # get the default ensemble for this round
-  if(r>=5) {
-    if(r==13) default_ensemble = "Ensemble_LOP_untrimmed" else default_ensemble = "Ensemble_LOP" 
-  }else {
-    default_ensemble = "Ensemble"
-  }
-  
+  default_ensemble = unique(scen_info[rnd_num == r, ens_default])
   
   # get the scenario descriptors for this round
   round_scenario_desc <- rnd_desc[[r]]
@@ -299,7 +290,8 @@ get_notes <- function(rnd_num) {
   if (rnd_num >= 3 & rnd_num < 5) round <- "round3"
   if (rnd_num >= 5 & rnd_num < 7) round <- "round5"
   if (rnd_num >= 7 & rnd_num < 8) round <- "round7"
-  if (rnd_num >= 8) round <- "round9"
+  if (rnd_num >= 8 & rnd_num < 13) round <- "round9"
+  if (rnd_num >= 13) round <- "round13"
   this_row <- fluidRow(
     column(1),
     column(10,
@@ -429,6 +421,24 @@ note_info <- list(
       "<u><b>Disclaimer:</b></u> The content of the COVID-19 Scenario Modeling Hub is solely the responsability of the participating teams and the Hub maintainers and does not represent the official views ",
       "of any related funding organizations</div>"
     )
+  ),
+  "round13" = list(
+    "first_col" = c(
+      '<div style="font-size:16px;"><u><b>Ensemble methods:</b></u> Currently, the Scenario Modeling Hub ensembles individual projections using two methods:', 
+      "</br>(a) <b>Ensemble_LOP</b> is calculated by averaging cumulative probabilities of a given value across weighted submissions. At each value, the highest and lowest probability is removed before averaging. ",
+      "</br>(b) <b>Ensemble_LOP_untrimmed</b> is calculated by averaging cumulative probabilities of a given value across weighted submissions. All values are included in the average.",
+      "</br>(c) <b>Ensemble</b> is obtained by calculating the weighted median of each submitted quantile.",
+      "</br>Ensembles projection include only those submissions that reported all quantiles and the four scenarios for their targets.",
+      'Individual model and ensemble projections are available in the <a href=https://github.com/midas-network/covid19-scenario-modeling-hub target-"blank">GitHub Repository</a>. </br></br>',
+      "<u><b>Ground truth data:</b></u> The model projections for cumulative hospitalizations start at zero, so no observed data are shown. </br></br>",
+      "</div>"
+    ),
+    "second_col" = c(
+      '<div style="font-size:16px;">',
+      "<u><b>Licensing:</b></u> Models projection are available by default under a CC BY 4.0 license. Some models have specific license. See repository for details.</br></br>",
+      "<u><b>Disclaimer:</b></u> The content of the COVID-19 Scenario Modeling Hub is solely the responsability of the participating teams and the Hub maintainers and does not represent the official views ",
+      "of any related funding organizations</div>"
+    )
   )
 )
 
@@ -449,6 +459,10 @@ scenario_plots_server <- function(id, tab_data=NULL) {
       # get round number
       r = as.integer(str_extract(id,"\\d+"))
       
+      # get default ensemble
+      def_ens <- unique(scen_info[rnd_num == r, ens_default])
+      ens_exc <- unique(scen_info[rnd_num == r, ens_excl])
+
       # When this plot tab changes (we observe it here ...)
       # we want to hide/show certain UI elements.. Since
       # this update is complicated, we push to function:
@@ -457,17 +471,65 @@ scenario_plots_server <- function(id, tab_data=NULL) {
         current_plot_tab(),{
           update_sidebar_inputs(
             pt = current_plot_tab(), 
-            model_names = unique(tab_data()$model_data$model_name),
-            default_ensemble = ifelse(r<5, "Ensemble", ifelse(r==13,"Ensemble_LOP_untrimmed","Ensemble_LOP")),
+            model_names = grep(ens_exc, unique(
+              tab_data()$model_data$model_name), value = TRUE, 
+              invert = TRUE),
+            default_ensemble = def_ens,
             input = input,
             session = session,
             r = r)
-        })
+          # update the ensemble checkbox
+          if (r > 4) {
+            updateCheckboxInput(session, "ensemble_chkbox_spec", value = FALSE)
+            updateCheckboxInput(session, "ensemble_chkbox_trend", value = FALSE)
+          }
+          # update the dropdown for Trend map
+          updateSelectizeInput(session, "trend_model_spec", choices=grep(ens_exc, unique(
+            tab_data()$model_data$model_name), value = TRUE, 
+            invert = TRUE), selected=def_ens)
+          # trigger a click to update value 
+          shinyjs::click("trend_update_button")
+       })
+      
+      show_ens_spec <- reactive(input$ensemble_chkbox_spec)
+      
+      if (!(r %in% c(8, 10))) {
+        observeEvent(
+          show_ens_spec(), {
+            update_sidebar_inputs(
+              pt = current_plot_tab(), 
+              model_names = if (isFALSE(show_ens_spec())) grep(ens_exc, unique(
+                tab_data()$model_data$model_name), value = TRUE, 
+                invert = TRUE) else unique(tab_data()$model_data$model_name),
+              default_ensemble = def_ens,
+              input = input,
+              session = session,
+              r = r)
+          })
+        }
+      
+      show_ens_trend <- reactive(input$ensemble_chkbox_trend)
+      
+      if (!(r %in% c(8, 10))) {
+        observeEvent(
+          show_ens_trend(), {
+            update_sidebar_inputs(
+              pt = current_plot_tab(), 
+              model_names = if (isFALSE(show_ens_trend())) grep(ens_exc, unique(
+                tab_data()$model_data$model_name), value = TRUE, 
+                invert = TRUE) else unique(tab_data()$model_data$model_name),
+              default_ensemble = def_ens,
+              input = input,
+              session = session,
+              r = r)
+          })
+      }
       
       ta <- reactive(input$target)
       lo <- reactive(input$location)
       ss <- reactive({
         c(input$scen_sel1, input$scen_sel2, input$scen_sel3, input$scen_sel4)
+        
       })
       
       # get the radio button scenario selection
@@ -475,6 +537,10 @@ scenario_plots_server <- function(id, tab_data=NULL) {
       
       # get the target checkbox selection(s)
       ta_chk = reactive(input$target_chkboxes)
+      
+      # Get the ensemble checkbox selection
+      show_ens <- reactive(input$ensemble_chkbox)
+      ens_chk = reactive(input$ensemble_chkbox_dist)
       
       # get the uncertainty level input
       pi <- reactive(input$pi)
@@ -494,7 +560,6 @@ scenario_plots_server <- function(id, tab_data=NULL) {
       
       trend_model_name = reactive(input$trend_model_spec)
       trend_model_extent = reactive(input$trend_model_extent)
-      
       # wrap these in eventReactive
       trend_map_choices = eventReactive(input$trend_update_button,{
         list("name" = trend_model_name(),
@@ -506,8 +571,8 @@ scenario_plots_server <- function(id, tab_data=NULL) {
       #' ########################################################
       
       output$visual_scenario <- renderPlotly({
-        server_plot(tab_data()$model_data, ta(), lo(), ss(), pi(), id)
-      }) %>% bindCache("visscen", ta(), lo(), ss(), pi(), id)
+        server_plot(tab_data()$model_data, ta(), lo(), ss(), pi(), id, show_ens())
+      }) %>% bindCache("visscen", ta(), lo(), ss(), pi(), id, show_ens())
       
       #' ########################################################
       #' MODEL SPECIFIC VISUALIZATION
@@ -518,8 +583,7 @@ scenario_plots_server <- function(id, tab_data=NULL) {
                                      rtab = id, 
                                      target_type = model_spec_target_types(),
                                      model_name = model_model_name(),
-                                     pi=pi()
-                                     )
+                                     pi=pi())
         
       }) %>% bindCache("modspec", lo(), id, model_spec_target_types(), model_model_name(), pi())
       
@@ -615,9 +679,11 @@ scenario_plots_server <- function(id, tab_data=NULL) {
           create_model_dist_plotly(dist_data,location=lo(),
                                    wk = as.integer(wk_dist()),
                                    outcome_type = model_dist_target_types(),
-                                   scenarios = ss())
+                                   scenarios = ss(),
+                                   rd_num = r,
+                                   ens_chk = ens_chk())
         }
-      }) %>% bindCache("dist", model_dist_target_types(), lo(), wk_dist(), id, ss())
+      }) %>% bindCache("dist", model_dist_target_types(), lo(), wk_dist(), id, ss(), ens_chk())
       
       #' ########################################################
       #' PROJECTION PEAKS

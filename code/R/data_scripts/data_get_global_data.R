@@ -26,7 +26,8 @@ pull_model_data <- function(round_val, keep_trunc = TRUE, drop_ens = FALSE) {
     res = rbindlist(fnames,use.names=TRUE,idcol = "outcome")
     
     if (isTRUE(drop_ens)) {
-      ens = fcase(x >=5, "Ensemble_LOP",default = "Ensemble")
+      ens = unique(unlist(scen_info[rnd_num == x, "ens_default"]))
+        #fcase(x >=5, "Ensemble_LOP", x==13, "Ensemble_LOP_untrimeed", default = "Ensemble")
       
       # Now, If more than one ensemble, we want to drop it
       ensembles_to_drop = setdiff(res[str_detect(model_name, "Ensemble"), unique(model_name)], ens)

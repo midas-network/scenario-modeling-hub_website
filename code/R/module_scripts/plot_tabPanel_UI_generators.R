@@ -7,6 +7,18 @@ scen_plot_panel <- function(ns) {
   tabPanel(
     "Scenario Plot",
     br(),
+    fluidRow(
+      column(1),
+      column(
+        4,
+        checkboxInput(
+          inputId = ns("ensemble_chkbox"), 
+          label = list(HTML('<div style="font-size:14px;color:#606060;">Show Additional Ensemble</div>')),
+          value = FALSE,
+          width = "100%"
+        )
+      )
+    ),
     shinycssloaders::withSpinner(
       plotlyOutput(outputId = ns("visual_scenario"), height = "100%", inline = FALSE),
       type = 8, color = "#211e6b", size = 1)
@@ -31,6 +43,16 @@ model_spec_panel <- function(ns, default_ensemble) {
                     choices=default_ensemble,
                     selected = default_ensemble)
       ),
+      column(
+        4,
+        br(),
+        checkboxInput(
+          inputId = ns("ensemble_chkbox_spec"), 
+          label = 'Show Additional Ensemble',
+          value = FALSE,
+          width = "100%"
+        )
+      )
     ),
     shinycssloaders::withSpinner(
       plotlyOutput(outputId = ns("model_spec"),height="100%", inline=F),
@@ -104,10 +126,20 @@ trend_maps_panel <- function(ns, default_ensemble,r) {
     br(),
     fluidRow(
       column(
-        4,
+        3,
         selectInput(inputId = ns("trend_model_spec"), label="Model",
                     choices=default_ensemble,
                     selected = default_ensemble)
+      ),
+      column(
+        3,
+        br(),
+        checkboxInput(
+          inputId = ns("ensemble_chkbox_trend"), 
+          label = 'Show Additional Ensemble',
+          value = FALSE,
+          width = "100%"
+        )
       ),
       column(
         4,
@@ -117,8 +149,7 @@ trend_maps_panel <- function(ns, default_ensemble,r) {
       column(
         2,
         actionButton(inputId = ns("trend_update_button"), "Update Map")
-      ),
-
+      )
     ),
     shinycssloaders::withSpinner(
       tagList(
@@ -164,10 +195,20 @@ model_distribution_panel <- function(ns,r) {
     "Model Distribution",
     br(),
     fluidRow(
+      column(1),
+      column(
+        3, br(),
+        checkboxInput(
+          inputId = ns("ensemble_chkbox_dist"), 
+          label = 'Show Additional Ensemble',
+          value = FALSE,
+          width = "100%"
+        )
+      ),
       column(3,
              radioButtons(inputId = ns("targ_model_dist"), label="Outcome Type", choices=c("Incident","Cumulative"), selected="Incident", inline=T)
       ),
-      column(4,
+      column(3,
              radioButtons(inputId = ns("wk_choice_dist"), label="Week", choices=wk_choices, selected=selweek, inline=T) # selected was "13"
       )
     ),

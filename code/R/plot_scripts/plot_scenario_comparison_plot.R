@@ -229,8 +229,7 @@ comparison_plot <- function(df, showlegend=F, y_range=NULL) {
   
   title = unique(df$comparison)
   
-  plot_ly(
-  ) %>% 
+  plot_ly(height = 1050) %>% 
     add_trace(
       data = df[ens_flag==FALSE], 
       x=~outcome,
@@ -335,7 +334,7 @@ create_scenario_comparison_plotly <- function(scen_comp_data = NULL, loc_name="U
 
   p <- subplot(list(comp_1_plot, comp_2_plot), shareY=FALSE, shareX=FALSE) %>%
     layout(legend=list(orientation="h"),
-           height=1050, 
+        #   height=1050, 
            margin=0.1,
            yaxis = list(tickformat= ".1%"),
            yaxis2 = list(tickformat= ".1%"),

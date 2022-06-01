@@ -6,7 +6,7 @@
 # `r` is the round number
 
 update_sidebar_inputs <- function(pt, model_names, default_ensemble, input, session, r) {
-  
+
   update_chooser <- list(
     "Scenario Plot" = sidebar_for_scenario_plot,
     "Model Specific Plots" = sidebar_for_model_specific,
@@ -42,7 +42,6 @@ sidebar_for_scenario_plot <- function(input, session,r,...) {
   show("target")
   hide("target_chkboxes")
   
-  
   #enable all inputs
   purrr::walk(c("location", "target", "scen_sel1", "scen_sel2", "scen_sel3", "scen_sel4", "pi"), enable)
   
@@ -50,6 +49,9 @@ sidebar_for_scenario_plot <- function(input, session,r,...) {
   updateRadioButtons(
     session, "target",choiceNames = get_target_choiceNames(), choiceValues = get_target_choiceValues()
   )
+  
+  # Hide additional ensemble checkbox for rounds before round 5 (only 1 ensemble)
+  if (r < 5) hide("ensemble_chkbox")
   
   # update the choices for model_specific PI intervals
   pi_options = list("names" = c("None", "50 %", "95 %"), "values" = list(0,50,95))
@@ -70,7 +72,7 @@ sidebar_for_scenario_plot <- function(input, session,r,...) {
   
 }
 
-sidebar_for_model_specific <- function(input, session,model_names, default_ensemble,...) {
+sidebar_for_model_specific <- function(input, session,model_names, default_ensemble, r,...) {
   
   #hide the radio button selector for scenario
   hide("scen_radio")
@@ -83,10 +85,12 @@ sidebar_for_model_specific <- function(input, session,model_names, default_ensem
   show("target")
   hide("target_chkboxes")
   
-  
   purrr::walk(c("target", "scen_sel1", "scen_sel2", "scen_sel3", "scen_sel4"), disable)
   
   purrr::walk(c("pi", "location"), enable)
+  
+  # Hide additional ensemble checkbox for rounds before round 5 (only 1 ensemble)
+  if (r < 5) hide("ensemble_chkbox_spec")
   
   # update the choices for model_specific PI intervals
   pi_options = list("names" = c("None", "50 %", "95 %"), "values" = list(0,50,95))
@@ -100,7 +104,6 @@ sidebar_for_model_specific <- function(input, session,model_names, default_ensem
   
   # update the dropdown
   updateSelectizeInput(session, "model_model_spec", choices=model_names, selected=default_ensemble)
-  
   
 }
 
@@ -131,7 +134,6 @@ sidebar_for_state_deviation <- function(input, session,...) {
   show("target")
   hide("target_chkboxes")
   
-  
   # disable the location, prediction intervals
   purrr::walk(c("location", "pi"), disable)
   # enable the rest
@@ -146,7 +148,7 @@ sidebar_for_state_deviation <- function(input, session,...) {
   
 }
 
-sidebar_for_trend_maps <- function(input, session,model_names, default_ensemble,...) {
+sidebar_for_trend_maps <- function(input, session,model_names, default_ensemble, r, ...) {
   
   #show the radio button selector for scenario
   show("scen_radio")
@@ -157,7 +159,8 @@ sidebar_for_trend_maps <- function(input, session,model_names, default_ensemble,
   show("target")
   hide("target_chkboxes")
   
-  
+  # Hide additional ensemble checkbox for rounds before round 5 (only 1 ensemble)
+  if (r < 5) hide("ensemble_chkbox_trend")
   # disable the location, prediction intervals
   purrr::walk(c("location", "pi"), disable)
   # enable the rest
@@ -174,6 +177,7 @@ sidebar_for_trend_maps <- function(input, session,model_names, default_ensemble,
   updateSelectizeInput(session, "trend_model_spec", choices=model_names, selected=default_ensemble)
   
 }
+
 sidebar_for_risk_maps <- function(input, session,...) {
   
   #show the radio button selector for scenario
@@ -184,7 +188,6 @@ sidebar_for_risk_maps <- function(input, session,...) {
     # hide the target checkboxes and show the target radiobuttons instead
   show("target")
   hide("target_chkboxes")
-  
   
   # disable the location, prediction intervals
   purrr::walk(c("location", "pi"), disable)
@@ -199,7 +202,7 @@ sidebar_for_risk_maps <- function(input, session,...) {
   )
   
 }
-sidebar_for_model_distribution <- function(input, session,...) {
+sidebar_for_model_distribution <- function(input, session, r, ...) {
   
   #hide the radio button selector for scenario
   hide("scen_radio")
@@ -210,6 +213,9 @@ sidebar_for_model_distribution <- function(input, session,...) {
   # hide the target checkboxes and show the target radiobuttons instead
   show("target")
   hide("target_chkboxes")
+  
+  # Hide additional ensemble checkbox for rounds before round 5 (only 1 ensemble)
+  if (r < 5) hide("ensemble_chkbox_dist")
   
   # disable the target, prediction intervals
   purrr::walk(c("target", "pi"), disable)
@@ -231,7 +237,6 @@ sidebar_for_peak_plot <- function(input, session,r,...) {
   
   # hide the target radios and show the target checkboxes instead
   hide("target")
-  
   # disable the prediction intervals and location
   purrr::walk(c("pi","location"), disable)
   

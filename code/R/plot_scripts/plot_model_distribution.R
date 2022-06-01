@@ -46,7 +46,13 @@
 
 create_model_dist_plotly <- function(model_data, location="US", wk=13, outcome_type = "Incident",
                                      scenarios=NULL,
-                                     x_scale = "absolute") {
+                                     x_scale = "absolute", 
+                                     rd_num = NULL, ens_chk = NULL) {
+  
+  if (isFALSE(ens_chk)) {
+    ens_exc <- unique(scen_info[rnd_num == rd_num, ens_excl])
+    model_data <- model_data[grep(ens_exc, model_name, invert = TRUE)]
+  }
   
   outcome_type = str_extract(outcome_type, "Inc|Cum")  
   
@@ -104,7 +110,8 @@ create_model_dist_plotly <- function(model_data, location="US", wk=13, outcome_t
                  color = ~model_type,
                  fillcolor = ~model_type,
                  colors=c("Individual"= "black", "Ensemble"="darkgreen"),
-                 showlegend = FALSE
+                 showlegend = FALSE,
+                 height = 1000
     ) %>% 
       layout(
         yaxis=list(title="", tickfont = list(size = 10))
@@ -189,9 +196,9 @@ create_model_dist_plotly <- function(model_data, location="US", wk=13, outcome_t
              text=plot_title,
              xref = "container", yref="container", x=0, y=1.10, xanchor="left",
              pad =list(b=30)
-           ),
+           )#,
              #x=0.0, xref='paper',y=1.10, yref='paper',margin=list(b=40)),
-           height=900
+          # height=900
     )
   
   return(p)
