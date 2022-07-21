@@ -180,7 +180,7 @@ round_scenario_plots_row_UI <- function(id) {
            h3(strong(paste0("Round ",r)), style = "color:#2d5973"),
            HTML(paste0('<div style="font-size:14px;">', round_scenario_desc, '</div>')),
            br(),
-           # Add scenario checkoboxes and radio buttons (originally hidden)
+           # Add scenario checkboxes and radio buttons (originally hidden)
            column(6, scen_checkbox_UI(ns("scen_sel1"),r,1,showA), scen_checkbox_UI(ns("scen_sel3"),r,3,showC)),
            column(6, scen_checkbox_UI(ns("scen_sel2"),r,2,showB), scen_checkbox_UI(ns("scen_sel4"),r,4,showD)),
            column(12,hidden(scen_radiobutton_UI(ns("scen_radio"), r)),style='padding:0px;'),
@@ -215,6 +215,7 @@ round_scenario_plots_row_UI <- function(id) {
       ),
       hr(style = "border:1px solid ; border-color: #bfbfbf;"),
       round_summary_notes(r)
+
   )
   
 }

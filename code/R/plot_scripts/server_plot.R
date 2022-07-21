@@ -1,6 +1,5 @@
 server_plot <- function(model_data, target, loc, scen_sel, pi, rtab, ens_chk) {
   
-
   # GOLD STANDARD DATA
   gs_target <- getOption("gs_targets")[[target]]
   if (gs_target == "cumulative_hospitalization") {
@@ -486,6 +485,33 @@ server_plot <- function(model_data, target, loc, scen_sel, pi, rtab, ens_chk) {
                      xref = "paper", yref='paper', showarrow = FALSE)))
     }
     
+    if (round_number %in% c(14)) {
+      annot <- c(annot,
+                 list(
+                   list(text = paste0(
+                     "USC-SIkJalpha & USC-SIkJalpha-update are two",
+                     " versions of the same model, where ",
+                     "USC-SIkJalpha-update includes more week of data."),
+                     font = list(size = 11, color = "grey"), y = -0.4, 
+                     x =  -0.02, xanchor = "left",
+                     xref = "paper", yref='paper', showarrow = FALSE)),
+                 list(
+                   list(text = paste0(
+                     "MOBS_NEU-GLEAM_COVID & MOBS_NEU-GLEAM_COVID-OT are two",
+                     " versions of the same model, where ",
+                     "MOBS_NEU-GLEAM_COVID-OT includes the impact of BA4/5 ",
+                     "and the other does not."),
+                     font = list(size = 11, color = "grey"), y = -0.425, 
+                     x =  -0.02, xanchor = "left",
+                     xref = "paper", yref='paper', showarrow = FALSE)),
+                 list(
+                   list(text = paste0(
+                     "MOBS_NEU-GLEAM_COVID and USC-SIkJalpha-update are ",
+                     "excluded from the ensemble."),
+                     font = list(size = 11, color = "grey"), y = -0.45, 
+                     x =  -0.02, xanchor = "left",
+                     xref = "paper", yref='paper', showarrow = FALSE)))
+    }
     
     
     # Add annotation for the prior peak line

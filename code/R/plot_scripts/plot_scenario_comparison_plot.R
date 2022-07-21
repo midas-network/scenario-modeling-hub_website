@@ -134,7 +134,13 @@ scenario_comparison_lookup <-
     #Round 13
     list(comp_scenarios = list("C-2022-02-25","D-2022-02-25"),
          ref_scenarios = list("No immune escape variant (Compares (C) to  (A))" = "A-2022-02-25",
-                              "New immune escape variant (Compares  (D) to  (B))" = "B-2022-02-25"))
+                              "New immune escape variant (Compares  (D) to  (B))" = "B-2022-02-25")),
+    
+    #Round 14
+    list(comp_scenarios = list("C-2022-05-09","D-2022-05-09"),
+         ref_scenarios = list("No immune escape variant (Compares (C) to  (A))" = "A-2022-05-09",
+                              "New immune escape variant (Compares  (D) to  (B))" = "B-2022-05-09"))
+    
 
   )
 

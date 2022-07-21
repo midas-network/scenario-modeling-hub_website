@@ -95,3 +95,7 @@ A-2022-02-25,optWan_noVar,"Optimistic waning, No immune escape variant",round13,
 B-2022-02-25,optWan_Var,"Optimistic waning, New immune escape variant",round13,2022-03-1.
 C-2022-02-25,pessWan_noVar,"Pessimistic waning, No immune escape variant",round13,2022-03-1.
 D-2022-02-25,pessWan_Var,"Pessimistic waning, New immune escape variant",round13,2022-03-1.
+A-2022-05-09,restBoo_noVar,"Age-restricted booster recommendations, No immune escape variant",round14,2022-06-0.
+B-2022-05-09,restBoo_Var,"Age-restricted booster recommendations, New immune escape variant",round14,2022-06-0.
+C-2022-05-09,broadBoo_noVar,"Broad booster recommendations, No immune escape variant",round14,2022-06-0.
+D-2022-05-09,broadBoo_Var,"Broad booster recommendations, New immune escape variant",round14,2022-06-0.

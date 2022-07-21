@@ -118,6 +118,7 @@ trend_maps_panel <- function(ns, default_ensemble,r) {
   rndmax = fcase(
     r %in% c(10,13), 52,
     r %in% c(11,12), 12,
+    r %in% c(14), 50,
       default = 26
   )
   

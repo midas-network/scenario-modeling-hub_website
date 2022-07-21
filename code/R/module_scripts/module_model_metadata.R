@@ -51,8 +51,8 @@ abstract_info <- function(r, model_name = "all") {
   model_names = stringr::str_remove_all(abstract_files,pattern="(^\\d{4}-\\d{2}-\\d{2}-)|-Abstract.md")
   
   if(model_name!="all") {
-    # only retunr the abstract files with model_name included
-    abstract_files = abstract_files[which(stringr::str_detect(abstract_files,paste0(model_name, "-")))]
+    # only return the abstract files with model_name included
+    abstract_files = abstract_files[which(stringr::str_detect(abstract_files,paste0(model_name, "(-A|-a)bstract")))]
   }
   
   # return as a list

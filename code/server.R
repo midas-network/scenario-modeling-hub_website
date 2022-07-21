@@ -43,7 +43,7 @@ shinyServer(function(input, output, session) {
   })
   
   ## Scenario Plots -------------------
-  for(i in seq(1,13)) {
+  for(i in seq(1,14)) {
     rndstr = paste0("round",i)
     scenario_plots_server(rndstr,reactive(tab_data()))
     model_metadata_server(rndstr)

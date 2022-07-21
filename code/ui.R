@@ -30,11 +30,11 @@ shinyUI(
         tabPanel(
             strong("Plots"),
             do.call(tabsetPanel,c(
-                lapply(seq(1, 13), function(x) { 
+                lapply(seq(1, 14), function(x) { 
                     tabPanel(paste0("Round ", x), 
                              round_scenario_plots_row_UI(paste0("round", x)))
                     }),
-                id = "rtab", type = "tabs", selected = "Round 13"
+                id = "rtab", type = "tabs", selected = "Round 14"
             ))
         ),
         # Add the second panel, Meta Data
@@ -49,6 +49,7 @@ shinyUI(
                 tabPanel("Round 11", model_metadata_UI("round11")),
                 tabPanel("Round 12", model_metadata_UI("round12")),
                 tabPanel("Round 13", model_metadata_UI("round13")),
+                tabPanel("Round 14", model_metadata_UI("round14")),
                 selected = "General Model Information"
             )
         ),
@@ -57,10 +58,10 @@ shinyUI(
         tabPanel(
             strong("Scenario Definitions"),
             do.call(tabsetPanel,c(
-                lapply(seq(1, 13), function(x) {
+                lapply(seq(1, 14), function(x) {
                     scenario_defintions_UI(paste0("round", x, "_def"))
                     }),
-                selected = "Round 13"
+                selected = "Round 14"
             ))
         )
     ) # End Nav Page
