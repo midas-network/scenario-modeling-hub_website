@@ -29,6 +29,7 @@ shinyServer(function(input, output, session) {
     } else {
       risk_map_data = get_risk_map_data(r,model_data)
       scen_comp_data = get_scen_comp_data(r,model_data,method="sum_incidence")
+      zc_data=NULL
     }
     
     gc()
@@ -37,13 +38,14 @@ shinyServer(function(input, output, session) {
       "scen_com" = scen_comp_data, 
       "st_dev" = get_variation_data(r, model_data),
       "risk_data" = risk_map_data,
-      "model_data" = model_data
+      "model_data" = model_data,
+      "zero_data" = zc_data
     )
     return(output)
   })
   
   ## Scenario Plots -------------------
-  for(i in seq(1,14)) {
+  for(i in seq(1,15)) {
     rndstr = paste0("round",i)
     scenario_plots_server(rndstr,reactive(tab_data()))
     model_metadata_server(rndstr)

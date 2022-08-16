@@ -21,7 +21,7 @@ Natural immunity can be treated differently from vaccine-induced immunity, altho
 Teams can choose different distributions of waning immunity (exponential, gamma) as long as the median is as specified in the scenarios.
 
 
-**For scenarios B and D that consider new variant X, the risks of infection will need to be increased by the immune escape parameter provided in the second dimension of the table. **
+**For scenarios B and D that consider new variant X, the risks of infection will need to be increased by the immune escape parameter provided in the second dimension of the table.**
 Examples: For instance, let’s assume that VE against Omicron infection is 50% immediately after a booster shot in an individual <65 yrs. Then, per scenario A,  protection should decline to 60% of the initial value after 10 mo of waning (40% reduction, cf table), so that protection should be 0.50\*0.60=30% against Omicron infection 10 mo after boosting. This means VE is 30% against Omicron infection after 10 mo of waning for a boosted individual, or equivalently that their infection risk is 0.7\*risk of infection of an unvaccinated individual.
 
 The second example illustrates how a repeat exposure could bump individuals to a higher protection level. Let’s consider the same person from before, who was in a plateau of 30% protection against infection after 10 mo, relative to an unvaccinated individual. Let’s assume that this individual gets infected, immunity is boosted, resulting in a protection of 70% immediately after this new infection. After 10 mo, per scenario A, the residual protection against infection would be 0.7*0.6= 42% in this individual, relative to an unvaccinated individual.

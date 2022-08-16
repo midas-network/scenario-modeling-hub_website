@@ -675,9 +675,12 @@ scenario_plots_server <- function(id, tab_data=NULL) {
       output$model_dist <- renderPlotly({
         
         dist_data <- tab_data()$model_data
+        z_data <- tab_data()$zero_data
         
         if(!is.null(dist_data)) {
-          create_model_dist_plotly(dist_data,location=lo(),
+          create_model_dist_plotly(model_data = dist_data,
+                                   zero_data = z_data,
+                                   location=lo(),
                                    wk = as.integer(wk_dist()),
                                    outcome_type = model_dist_target_types(),
                                    scenarios = ss(),

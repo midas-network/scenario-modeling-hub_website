@@ -41,7 +41,8 @@ rnd_desc = list("Scenario defined as of 2020-12-22</br>Model Projecting from Epi
                 "Scenario defined as of 2021-12-13</br>Model Projecting from Epiweek 51 to Epiweek 10",
                 "Scenario defined as of 2022-01-09</br>Model Projecting from Epiweek 2 to Epiweek 13",
                 "Scenario defined as of 2022-02-22</br>Model Projecting from Epiweek 11 to Epiweek 11",
-                "Scenario defined as of 2022-05-17</br>Model Projecting from Epiweek 23 to Epiweek 23")
+                "Scenario defined as of 2022-05-17</br>Model Projecting from Epiweek 23 to Epiweek 23",
+                "Scenario defined as of 2022-07-22</br>Model Projecting from Epiweek 31 to Epiweek 18")
 scen_info[, rnd_tab := paste0("Round ",rnd_num)]
 
 scen_info[, ens_default := case_when(
@@ -59,9 +60,9 @@ scen_info[, ens_excl := case_when(
 scen_info[, proj_length:=fcase(
   rnd_num%in%c(10,13),52,
   rnd_num%in%c(14),50,
+  rnd_num%in%c(15),40,
   rnd_num %in% c(11,12),12,
   default=26
-  
 )]
 
 

@@ -99,3 +99,11 @@ A-2022-05-09,restBoo_noVar,"Age-restricted booster recommendations, No immune es
 B-2022-05-09,restBoo_Var,"Age-restricted booster recommendations, New immune escape variant",round14,2022-06-0.
 C-2022-05-09,broadBoo_noVar,"Broad booster recommendations, No immune escape variant",round14,2022-06-0.
 D-2022-05-09,broadBoo_Var,"Broad booster recommendations, New immune escape variant",round14,2022-06-0.
+A-2022-07-19,earlyBoo_noVar,"Early boosters, No new variant",round15,2022-08-0.
+B-2022-07-19,earlyBoo_Var,"Early boosters, New immune escape variant",round15,2022-08-0.
+C-2022-07-19,lateBoo_noVar,"Late boosters, No new variant",round15,2022-08-0.
+D-2022-07-19,lateBoo_Var,"Late boosters, New immune escape variant",round15,2022-08-0.
+A-2022-07-19,earlyBoo_noVar,"Early boosters, No new variant",round15,2022-07-3.
+B-2022-07-19,earlyBoo_Var,"Early boosters, New immune escape variant",round15,2022-07-3.
+C-2022-07-19,lateBoo_noVar,"Late boosters, No new variant",round15,2022-07-3.
+D-2022-07-19,lateBoo_Var,"Late boosters, New immune escape variant",round15,2022-07-3.

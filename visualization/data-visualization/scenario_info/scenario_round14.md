@@ -1,7 +1,7 @@
 <p>&nbsp;</p>
 Round 14 of the COVID-19 Scenario Modeling Hub (SMH) considers the interaction of booster strategies (first dimension) with the epidemiology of circulating strains (2nd dimension) over a 52-week period. We follow the usual 2 x 2 table structure. 
 
-<img src= https://raw.githubusercontent.com/midas-network/covid19-scenario-modeling-hub/master/Round14_scenarios_table.PNG>
+<img src= https://raw.githubusercontent.com/midas-network/covid19-scenario-modeling-hub/master/previous-rounds/Round14_scenarios_table.PNG>
 In all scenarios, the VE of reformulated boosters available starting Oct 1st, 2022 should be set to **80% against symptomatic disease** with non-immune escape strains. 
 ### **Waning Immunity:**
 1. Waning of immunity against infection

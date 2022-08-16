@@ -44,7 +44,8 @@
 # 
 # }
 
-create_model_dist_plotly <- function(model_data, location="US", wk=13, outcome_type = "Incident",
+create_model_dist_plotly <- function(model_data, zero_data = NULL,
+                                     location="US", wk=13, outcome_type = "Incident",
                                      scenarios=NULL,
                                      x_scale = "absolute", 
                                      rd_num = NULL, ens_chk = NULL) {
@@ -55,9 +56,14 @@ create_model_dist_plotly <- function(model_data, location="US", wk=13, outcome_t
   }
   
   outcome_type = str_extract(outcome_type, "Inc|Cum")  
-  
   # get input data for the plot
-  gg_input <- model_data[location_name == location & target_wk == wk & str_detect(outcome, outcome_type)]
+  if(outcome_type == "Inc" | is.null(zero_data)) {
+    gg_input <- model_data[location_name == location & target_wk == wk & str_detect(outcome, outcome_type)]  
+  } else {
+    gg_input <- zero_data[location_name == location & target_wk == wk & str_detect(outcome, outcome_type)]  
+  }
+  
+  
   
   # get rate and outcome variables
   if(x_scale == "per 100k") {
@@ -148,6 +154,7 @@ create_model_dist_plotly <- function(model_data, location="US", wk=13, outcome_t
   # }
   
   # We need to add annotations, but we don't know what Scenario Annotations we need.
+  
   outcome_annotations <- list(
     list(x = 0.0 , y = 1.05, text = "<b>Cases</b>", font=list(size=12), showarrow = F, xref='paper', yref='paper'),
     list(x = 0.33 , y = 1.05, text = "<b>Hospitalizations</b>", font=list(size=12),showarrow = F, xref='paper', yref='paper'),
@@ -186,8 +193,28 @@ create_model_dist_plotly <- function(model_data, location="US", wk=13, outcome_t
     scenario_annotations[[3]]$y=0.33
     scenario_annotations[[4]]$y=0.0
   }
+
+  if(outcome_type == "Inc") {
+    title_stem = "(Inc)"
+  }
+  if(outcome_type == "Cum" & is.null(zero_data)) {
+    title_stem = "(Cumul)"
+  }
+  if(outcome_type=="Cum" & !is.null(zero_data)) {
+    title_stem = "(Cumul w/in Proj Period)"
+  }
   
-  plot_title <- paste0("Distribution of Projections, by Outcome, Model, and Scenario (Week: ", wk, "; Location: ", location, ")")
+  
+  plot_title <- paste0(
+    "Distribution of Projections, by Outcome ",
+    title_stem,
+    ", Model, and Scenario (Week: ",
+    wk,
+    "; Location: ",
+    location,
+    ")"
+  )
+    
   
   p <- p %>% 
     layout(annotations = c(outcome_annotations,scenario_annotations, xaxis_annotations),
